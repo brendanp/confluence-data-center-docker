@@ -16,7 +16,9 @@ services:
       - POSTGRES_COLLATE=C
       - POSTGRES_COLLATE_TYPE=C
     ports:
-      - 5432:5432  # Confluence node 1
+      - 5432:5432
+  # The first time when setting up the cluster you ONLY run and set up one node.
+  # Confluence node 1
   confluence1:
     image: atlassian/confluence-server:latest
     container_name: confluencedc_confuence1                           # Name for node 1
@@ -36,25 +38,25 @@ services:
       - "traefik.backend.loadbalancer.stickiness=true"                # Stick users to a single node
       - "traefik.port=8090"                                           # Entry point port
 
-  # Confluence node 2
-  confluence2:
-    image: atlassian/confluence-server:latest
-    container_name: confluencedc_confuence2                           # Name for node 2
-    volumes:
-      - ./confluence2Home:/var/atlassian/application-data/confluence    # Local home for node 2
-      - ./sharedHome:/var/atlassian/application-data/shared             # Shared home for cluster
-    ports:
-      - "8020:8090"                                                   # Confluence web port for node 2
-      - "8021:8091"                                                   # Synchrony port for node 2
-    environment:
-      - CATALINA_CONNECTOR_PROXYNAME=localhost                        # Reverse proxy host name
-      - CATALINA_CONNECTOR_PROXYPORT=8090                             # Reverse proxy port
-    labels:
-      - "traefik.backend=confluence"                                  # Name of the backend
-      - "traefik.frontend.entryPoints=http"                           # Match requests coming in on http
-      - "traefik.frontend.rule=Host:localhost"                        # Match requests coming in on localhost
-      - "traefik.backend.loadbalancer.stickiness=true"                # Stick users to a single node
-      - "traefik.port=8090"                                           # Entry point port
+  # # Confluence node 2
+  # confluence2:
+  #   image: atlassian/confluence-server:latest
+  #   container_name: confluencedc_confuence2                           # Name for node 2
+  #   volumes:
+  #     - ./confluence2Home:/var/atlassian/application-data/confluence    # Local home for node 2
+  #     - ./sharedHome:/var/atlassian/application-data/shared             # Shared home for cluster
+  #   ports:
+  #     - "8020:8090"                                                   # Confluence web port for node 2
+  #     - "8021:8091"                                                   # Synchrony port for node 2
+  #   environment:
+  #     - CATALINA_CONNECTOR_PROXYNAME=localhost                        # Reverse proxy host name
+  #     - CATALINA_CONNECTOR_PROXYPORT=8090                             # Reverse proxy port
+  #   labels:
+  #     - "traefik.backend=confluence"                                  # Name of the backend
+  #     - "traefik.frontend.entryPoints=http"                           # Match requests coming in on http
+  #     - "traefik.frontend.rule=Host:localhost"                        # Match requests coming in on localhost
+  #     - "traefik.backend.loadbalancer.stickiness=true"                # Stick users to a single node
+  #     - "traefik.port=8090"                                           # Entry point port
 
   # # Confluence node 3
   # confluence3:
@@ -89,6 +91,6 @@ services:
 
 volumes:
   confluence1Home:                                                    # Local home for node 1  
-  confluence2Home:                                                    # Local home for node 2
+  # confluence2Home:                                                    # Local home for node 2
   # confluence3Home:                                                    # Local home for node 3  
   sharedHome:                                                         # Shared home for cluster
